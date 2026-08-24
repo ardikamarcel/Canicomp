@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skuad Garuda — Timnas Indonesia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --red: #c81428;
+  --red-dark: #8c0e1e;
+  --red-glow: rgba(200,20,40,0.35);
+  --black: #121014;
+  --black-soft: #1c1820;
+  --black-card: #221d24;
+  --bone: #f3efe6;
+  --bone-dim: #cfc9bb;
+  --gold: #c9a24b;
+  --pitch: #16332b;
+  --pitch-light: #204b3c;
+  --line: rgba(243,239,230,0.14);
+
+  --f-display: "Big Shoulders Display", sans-serif;
+  --f-body: "Plus Jakarta Sans", sans-serif;
+  --f-mono: "Space Mono", monospace;
+}
+
+*{ box-sizing: border-box; margin:0; padding:0; }
+html{ scroll-behavior: smooth; }
+body{
+  background: var(--black);
+  color: var(--bone);
+  font-family: var(--f-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img,svg{ display:block; max-width:100%; }
+a{ color: inherit; text-decoration:none; }
+button{ font-family: inherit; cursor:pointer; }
+::selection{ background: var(--red); color: var(--bone); }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+}
+
+/* ============ UTIL ============ */
+.wrap{ max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+.eyebrow{
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display:flex; align-items:center; gap:10px;
+}
+.eyebrow::before{
+  content:""; width:22px; height:2px; background: var(--gold); display:inline-block;
+}
+h1,h2,h3{
+  font-family: var(--f-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 0.95;
+}
+p{ color: var(--bone-dim); }
+.btn{
+  display:inline-flex; align-items:center; gap:10px;
+  font-family: var(--f-mono);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 14px 24px;
+  border: 1px solid var(--bone);
+  background: transparent;
+  color: var(--bone);
+  transition: all .25s ease;
+}
+.btn:hover{ background: var(--bone); color: var(--black); }
+.btn.solid{ background: var(--red); border-color: var(--red); color: var(--bone); }
+.btn.solid:hover{ background: var(--bone); color: var(--red); border-color: var(--bone); }
+
+/* perforated ticket edge */
+.ticket-edge{
+  position:relative;
+}
+.ticket-edge::after{
+  content:"";
+  position:absolute; left:0; right:0; bottom:-1px; height:14px;
+  background-image: radial-gradient(circle at 10px 0, transparent 7px, var(--black) 7.5px);
+  background-size: 20px 14px;
+  background-repeat: repeat-x;
+}
+
+/* ============ SCOREBOARD NAV ============ */
+.scoreboard-nav{
+  position: fixed; top:0; left:0; right:0; z-index: 100;
+  background: rgba(18,16,20,0.86);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-inner{
+  max-width:1180px; margin:0 auto; padding: 0 28px;
+  display:flex; align-items:center; justify-content:space-between;
+  height: 68px;
+}
+.brand{
+  display:flex; align-items:center; gap:12px;
+  font-family: var(--f-display); font-weight:900; font-size:22px;
+  letter-spacing: 0.02em; text-transform: uppercase;
+}
+.brand .dot{ width:10px; height:10px; background: var(--red); border-radius:50%; box-shadow: 0 0 12px var(--red-glow); }
+.brand small{ font-family: var(--f-mono); font-size:10px; color: var(--gold); letter-spacing:0.15em; display:block; text-transform:uppercase; }
+
+.tabs{ display:flex; gap: 2px; }
+.tab-btn{
+  background: none; border: none; color: var(--bone-dim);
+  font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 10px 16px; display:flex; align-items:center; gap:8px;
+  border-bottom: 2px solid transparent;
+  transition: all .2s ease;
+}
+.tab-btn .num{
+  font-family: var(--f-display); font-weight:800; font-size:15px; color: var(--gold);
+}
+.tab-btn:hover{ color: var(--bone); }
+.tab-btn.active{ color: var(--bone); border-bottom-color: var(--red); }
+
+.nav-toggle{ display:none; background:none; border:1px solid var(--line); color:var(--bone); padding:8px 12px; font-family: var(--f-mono); font-size:11px; }
+
+@media (max-width: 760px){
+  .tabs{
+    position: fixed; top: 68px; left:0; right:0;
+    flex-direction: column; background: var(--black-soft);
+    border-bottom: 1px solid var(--line);
+    max-height: 0; overflow:hidden; transition: max-height .3s ease;
+  }
+  .tabs.open{ max-height: 260px; }
+  .tab-btn{ padding: 16px 28px; border-bottom: 1px solid var(--line); justify-content:flex-start; }
+  .nav-toggle{ display:block; }
+}
+
+/* ============ PAGE SYSTEM ============ */
+.page{ display:none; }
+.page.active{ display:block; animation: fadeUp .5s ease; }
+@keyframes fadeUp{ from{ opacity:0; transform: translateY(14px);} to{opacity:1; transform:none;} }
+
+/* ============ HERO ============ */
+.hero{
+  position:relative;
+  min-height: 92vh;
+  display:flex; align-items:center;
+  padding-top: 68px;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 10%, rgba(200,20,40,0.18), transparent 60%),
+    radial-gradient(ellipse 50% 60% at 90% 90%, rgba(22,51,43,0.5), transparent 60%),
+    var(--black);
+  overflow:hidden;
+}
+.floodlight{
+  position:absolute; inset:0; pointer-events:none;
+  background: conic-gradient(from 210deg at 85% -10%, rgba(255,255,255,0.08), transparent 25%);
+  animation: sweep 9s ease-in-out infinite alternate;
+}
+@keyframes sweep{ from{ opacity:.5;} to{ opacity: 1;} }
+
+.hero-grid{
+  position:relative; z-index:2;
+  display:grid; grid-template-columns: 1.3fr 0.9fr; gap:50px; align-items:end;
+  width:100%;
+}
+.hero h1{
+  font-size: clamp(56px, 10vw, 128px);
+  color: var(--bone);
+  -webkit-text-stroke: 1px var(--bone);
+}
+.hero h1 span{ color: var(--red); -webkit-text-stroke: none; }
+.hero p.lead{ font-size: 17px; max-width: 46ch; margin-top: 18px; }
+.hero-cta{ display:flex; gap:14px; margin-top: 32px; flex-wrap:wrap; }
+
+.scorebox{
+  background: var(--black-soft);
+  border: 1px solid var(--line);
+  padding: 26px;
+  font-family: var(--f-mono);
+}
+.scorebox .row{ display:flex; justify-content:space-between; padding: 10px 0; border-bottom: 1px dashed var(--line); font-size:13px; }
+.scorebox .row:last-child{ border-bottom:none; }
+.scorebox .row b{ color: var(--gold); font-weight:700; }
+.scorebox .clock{
+  font-family: var(--f-display); font-size: 42px; font-weight:800; color: var(--bone);
+  letter-spacing: 0.02em; margin-bottom: 6px;
+}
+.scorebox .tag{ color:var(--red); font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin-bottom:14px; display:block; }
+
+/* number watermark */
+.num-watermark{
+  position:absolute; right: -40px; top: 40%; transform: translateY(-50%);
+  font-family: var(--f-display); font-weight:900; font-size: min(40vw,520px);
+  color: transparent; -webkit-text-stroke: 1px rgba(243,239,230,0.06);
+  z-index:1; user-select:none; pointer-events:none; line-height:1;
+}
+
+/* ============ STAT STRIP ============ */
+.stat-strip{
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  background: var(--black-soft);
+}
+.stat-strip .wrap{
+  display:grid; grid-template-columns: repeat(4,1fr);
+}
+.stat-item{ padding: 26px 20px; border-right: 1px solid var(--line); text-align:center; }
+.stat-item:last-child{ border-right:none; }
+.stat-item .n{ font-family: var(--f-display); font-size: 40px; font-weight:800; color: var(--gold); }
+.stat-item .l{ font-family: var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color: var(--bone-dim); margin-top:4px; }
+@media (max-width:700px){ .stat-strip .wrap{ grid-template-columns: repeat(2,1fr);} .stat-item{ border-bottom:1px solid var(--line);} }
+
+/* ============ SECTION GENERIC ============ */
+section{ padding: 100px 0; }
+.section-head{ margin-bottom: 54px; max-width: 640px; }
+.section-head h2{ font-size: clamp(34px,5vw,56px); margin-top:10px; }
+.section-head p{ margin-top: 14px; font-size:16px; }
+
+/* teaser cards on home */
+.teaser-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+.teaser-card{
+  background: var(--black-soft); border: 1px solid var(--line);
+  padding: 30px 26px; position:relative; overflow:hidden;
+  transition: transform .3s ease, border-color .3s ease;
+}
+.teaser-card:hover{ transform: translateY(-6px); border-color: var(--red); }
+.teaser-card .idx{ font-family: var(--f-mono); color: var(--gold); font-size:12px; }
+.teaser-card h3{ font-size: 26px; margin: 14px 0 10px; }
+.teaser-card p{ font-size: 14px; }
+.teaser-card .go{ margin-top:18px; font-family: var(--f-mono); font-size:12px; color: var(--red); letter-spacing:.06em; text-transform:uppercase; }
+@media (max-width: 860px){ .teaser-grid{ grid-template-columns:1fr; } }
+
+/* ============ SKUAD PAGE ============ */
+.pitch-wrap{
+  background: repeating-linear-gradient(180deg, var(--pitch) 0 60px, var(--pitch-light) 60px 120px);
+  border: 1px solid var(--line);
+  padding: 50px 26px;
+  margin-bottom: 60px;
+  position:relative;
+}
+.pitch-wrap::before{
+  content:""; position:absolute; inset: 18px; border: 1px solid rgba(243,239,230,0.25); pointer-events:none;
+}
+.formation-row{ display:flex; justify-content:center; gap: 26px; flex-wrap:wrap; margin: 26px 0; }
+.pos-dot{
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  font-family: var(--f-mono); font-size: 10px; text-align:center; width: 92px;
+}
+.pos-dot .circle{
+  width: 46px; height:46px; border-radius:50%;
+  background: var(--bone); color: var(--black);
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--f-display); font-weight:800; font-size:16px;
+  border: 2px solid var(--gold);
+}
+.pos-dot span{ color: var(--bone); letter-spacing:.04em; }
+
+.squad-group{ margin-bottom: 54px; }
+.squad-group .glabel{
+  font-family: var(--f-mono); font-size:12px; color:var(--gold);
+  text-transform:uppercase; letter-spacing:.1em;
+  border-bottom: 1px solid var(--line); padding-bottom: 12px; margin-bottom: 22px;
+  display:flex; justify-content:space-between;
+}
+.player-grid{ display:grid; grid-template-columns: repeat(4,1fr); gap:18px; }
+.player-card{
+  background: var(--black-soft); border:1px solid var(--line);
+  padding: 20px; position:relative;
+  transition: border-color .25s ease, transform .25s ease;
+}
+.player-card:hover{ border-color: var(--red); transform: translateY(-4px); }
+.player-card .role{ font-family: var(--f-mono); font-size:10px; color: var(--red); text-transform:uppercase; letter-spacing:.08em; }
+.player-card h4{ font-family: var(--f-display); font-size: 22px; font-weight:700; text-transform:uppercase; margin-top:8px; line-height:1.05; }
+@media (max-width: 980px){ .player-grid{ grid-template-columns: repeat(2,1fr);} }
+@media (max-width: 560px){ .player-grid{ grid-template-columns: 1fr;} .formation-row{ gap:14px;} }
+
+/* ============ JADWAL PAGE ============ */
+.fixture-list{ display:flex; flex-direction:column; gap:22px; }
+.fixture-card{
+  display:grid; grid-template-columns: 90px 1fr auto; gap:24px; align-items:center;
+  background: var(--black-soft); border:1px solid var(--line);
+  padding: 24px 26px; position:relative;
+}
+.fixture-card.ticket-edge::after{ background-image: radial-gradient(circle at 10px 0, transparent 7px, var(--black) 7.5px); }
+.fixture-date{ font-family: var(--f-mono); text-align:center; border-right: 1px dashed var(--line); padding-right:20px; }
+.fixture-date .d{ font-family: var(--f-display); font-size: 30px; font-weight:800; color: var(--gold); }
+.fixture-date .m{ font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--bone-dim); }
+.fixture-main .comp{ font-family: var(--f-mono); font-size:11px; color: var(--red); text-transform:uppercase; letter-spacing:.08em; }
+.fixture-main h4{ font-family: var(--f-display); font-size: 26px; font-weight:800; text-transform:uppercase; margin-top:6px; }
+.fixture-main .venue{ font-size:13px; margin-top:4px; }
+.fixture-status{ font-family: var(--f-mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; padding:8px 14px; border:1px solid var(--line); white-space:nowrap; }
+@media (max-width:700px){ .fixture-card{ grid-template-columns:1fr; text-align:left;} .fixture-date{ border-right:none; border-bottom:1px dashed var(--line); padding-bottom:12px; text-align:left; display:flex; gap:10px; align-items:baseline;} }
+
+.note-box{
+  margin-top: 40px; padding: 20px 24px; border-left: 3px solid var(--gold);
+  background: var(--black-soft); font-size: 14px; color: var(--bone-dim);
+}
+
+/* ============ SEJARAH PAGE ============ */
+.timeline{ position:relative; padding-left: 40px; }
+.timeline::before{ content:""; position:absolute; left:6px; top:6px; bottom:6px; width:1px; background: var(--line); }
+.tl-item{ position:relative; padding-bottom: 54px; }
+.tl-item:last-child{ padding-bottom:0; }
+.tl-item::before{
+  content:""; position:absolute; left:-40px; top:4px; width:13px; height:13px; border-radius:50%;
+  background: var(--red); box-shadow: 0 0 0 4px var(--black), 0 0 14px var(--red-glow);
+}
+.tl-item .yr{ font-family: var(--f-display); font-size: 34px; font-weight:800; color: var(--gold); }
+.tl-item h4{ font-family: var(--f-display); font-size:22px; text-transform:uppercase; margin: 6px 0 8px; }
+.tl-item p{ max-width: 60ch; font-size:14.5px; }
+
+.trophy-strip{
+  display:grid; grid-template-columns: repeat(3,1fr); gap:20px; margin-top: 60px;
+}
+.trophy-card{
+  border: 1px solid var(--gold); padding: 28px 22px; text-align:center;
+  background: linear-gradient(180deg, rgba(201,162,75,0.08), transparent);
+}
+.trophy-card .n{ font-family: var(--f-display); font-size: 46px; font-weight:900; color: var(--gold); }
+.trophy-card .l{ font-family: var(--f-mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; margin-top:6px; }
+@media (max-width:760px){ .trophy-strip{ grid-template-columns:1fr;} }
+
+/* ============ CTA / FOOTER ============ */
+.cta-block{
+  background: var(--red); color: var(--bone); padding: 90px 0; text-align:center;
+}
+.cta-block h2{ font-size: clamp(34px,6vw,64px); }
+.cta-block p{ color: rgba(243,239,230,0.85); max-width: 50ch; margin: 16px auto 30px; }
+.cta-block .btn{ border-color: var(--bone); }
+.cta-block .btn:hover{ background: var(--bone); color: var(--red); }
+
+footer{ background: var(--black-soft); border-top: 1px solid var(--line); padding: 50px 0 30px; }
+.foot-grid{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:30px; margin-bottom: 30px; }
+.foot-brand{ font-family: var(--f-display); font-size: 26px; font-weight:900; text-transform:uppercase; }
+.foot-note{ font-family: var(--f-mono); font-size: 12px; color: var(--bone-dim); max-width: 420px; }
+.foot-bottom{ border-top:1px solid var(--line); padding-top:20px; font-family: var(--f-mono); font-size:11px; color: var(--bone-dim); display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+
+@media (max-width: 900px){
+  .hero-grid{ grid-template-columns: 1fr; }
+  .teaser-grid{ grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="scoreboard-nav">
+  <div class="nav-inner">
+    <div class="brand"><span class="dot"></span>SKUAD GARUDA<small>Timnas Sepak Bola Indonesia</small></div>
+    <button class="nav-toggle" id="navToggle">MENU</button>
+    <div class="tabs" id="tabs">
+      <button class="tab-btn active" data-page="beranda"><span class="num">01</span> Beranda</button>
+      <button class="tab-btn" data-page="skuad"><span class="num">02</span> Skuad</button>
+      <button class="tab-btn" data-page="jadwal"><span class="num">03</span> Jadwal</button>
+      <button class="tab-btn" data-page="sejarah"><span class="num">04</span> Sejarah</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= PAGE 1: BERANDA ================= -->
+<main>
+<section class="page active" id="beranda" data-page="beranda">
+
+  <div class="hero">
+    <div class="floodlight"></div>
+    <div class="num-watermark">10</div>
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Timnas Sepak Bola Indonesia</span>
+        <h1>GARUDA<br>DI <span>DADAKU</span></h1>
+        <p class="lead">Bukan cuma sebelas pemain di lapangan — ini soal satu bangsa yang menahan napas bersamaan tiap kali peluit dibunyikan. Kenalan lebih dekat dengan skuad, jadwal, dan perjalanan panjang tim Merah Putih.</p>
+        <div class="hero-cta">
+          <button class="btn solid" data-goto="skuad">Lihat Skuad →</button>
+          <button class="btn" data-goto="jadwal">Cek Jadwal</button>
+        </div>
+      </div>
+      <div class="scorebox">
+        <span class="tag">● Sedang Berlangsung</span>
+        <div class="clock" id="countdownClock">--:--:--</div>
+        <div style="font-family:var(--f-mono); font-size:12px; color:var(--bone-dim); margin-bottom:16px;">Estimasi sisa waktu Piala AFF 2026 (berakhir 26 Agustus)</div>
+        <div class="row"><span>Ajang</span><b>Piala AFF 2026</b></div>
+        <div class="row"><span>Grup</span><b>Grup A</b></div>
+        <div class="row"><span>Pelatih</span><b>John Herdman</b></div>
+        <div class="row"><span>Markas</span><b>GBK, Jakarta</b></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-strip">
+    <div class="wrap">
+      <div class="stat-item"><div class="n">1930</div><div class="l">Tahun berdiri PSSI</div></div>
+      <div class="stat-item"><div class="n">6×</div><div class="l">Runner-up Piala AFF</div></div>
+      <div class="stat-item"><div class="n">1938</div><div class="l">Tim Asia pertama di Piala Dunia</div></div>
+      <div class="stat-item"><div class="n">26</div><div class="l">Pemain skuad Piala AFF 2026</div></div>
+    </div>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Jelajahi</span>
+        <h2>Tiga sisi cerita Garuda</h2>
+        <p>Dari nama-nama yang berjuang di lapangan, jadwal pertandingan yang mendebarkan, sampai sejarah panjang yang membentuk identitas tim ini.</p>
+      </div>
+      <div class="teaser-grid">
+        <div class="teaser-card" data-goto="skuad">
+          <div class="idx">02 / Skuad</div>
+          <h3>Kenali Pemainnya</h3>
+          <p>Dari mistar gawang sampai lini depan — inilah nama-nama yang dipercaya John Herdman mengangkat trofi Piala AFF.</p>
+          <div class="go">Buka halaman skuad →</div>
+        </div>
+        <div class="teaser-card" data-goto="jadwal">
+          <div class="idx">03 / Jadwal</div>
+          <h3>Kapan Main Lagi?</h3>
+          <p>Susunan laga fase grup Piala AFF 2026, lengkap dengan lawan, tanggal, dan tempat pertandingan.</p>
+          <div class="go">Buka halaman jadwal →</div>
+        </div>
+        <div class="teaser-card" data-goto="sejarah">
+          <div class="idx">04 / Sejarah</div>
+          <h3>Dari Mana Asalnya</h3>
+          <p>Perjalanan sepak bola Indonesia sejak era Hindia Belanda sampai jadi kebanggaan satu bangsa hari ini.</p>
+          <div class="go">Buka halaman sejarah →</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</section>
+
+<!-- ================= PAGE 2: SKUAD ================= -->
+<section class="page" id="skuad" data-page="skuad">
+  <div style="height:68px;"></div>
+  <section style="padding-top:60px;">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Halaman 02</span>
+        <h2>Skuad Garuda</h2>
+        <p>Perpaduan pemain langganan dan wajah-wajah baru yang dipanggil pelatih John Herdman untuk mengarungi Piala AFF 2026. Total 26 nama dipersiapkan — berikut inti kekuatannya, disusun per posisi.</p>
+      </div>
+
+      <div class="pitch-wrap">
+        <div class="formation-row">
+          <div class="pos-dot"><div class="circle">GK</div><span>Kiper</span></div>
+        </div>
+        <div class="formation-row">
+          <div class="pos-dot"><div class="circle">DF</div><span>Belakang</span></div>
+          <div class="pos-dot"><div class="circle">DF</div><span>Belakang</span></div>
+          <div class="pos-dot"><div class="circle">DF</div><span>Belakang</span></div>
+          <div class="pos-dot"><div class="circle">DF</div><span>Belakang</span></div>
+        </div>
+        <div class="formation-row">
+          <div class="pos-dot"><div class="circle">MF</div><span>Tengah</span></div>
+          <div class="pos-dot"><div class="circle">MF</div><span>Tengah</span></div>
+        </div>
+        <div class="formation-row">
+          <div class="pos-dot"><div class="circle">FW</div><span>Sayap/Depan</span></div>
+          <div class="pos-dot"><div class="circle">FW</div><span>Sayap/Depan</span></div>
+          <div class="pos-dot"><div class="circle">FW</div><span>Sayap/Depan</span></div>
+        </div>
+      </div>
+
+      <div class="squad-group">
+        <div class="glabel"><span>Penjaga Gawang</span><span>3 pemain</span></div>
+        <div class="player-grid">
+          <div class="player-card"><div class="role">Kiper</div><h4>Nadeo Argawinata</h4></div>
+          <div class="player-card"><div class="role">Kiper</div><h4>Cahya Supriadi</h4></div>
+          <div class="player-card"><div class="role">Kiper</div><h4>Muhammad Riyandi</h4></div>
+        </div>
+      </div>
+
+      <div class="squad-group">
+        <div class="glabel"><span>Barisan Pertahanan</span><span>8 pemain</span></div>
+        <div class="player-grid">
+          <div class="player-card"><div class="role">Bek</div><h4>Rizky Ridho</h4></div>
+          <div class="player-card"><div class="role">Bek</div><h4>Jordi Amat</h4></div>
+          <div class="player-card"><div class="role">Bek</div><h4>Sandy Walsh</h4></div>
+          <div class="player-card"><div class="role">Bek</div><h4>Justin Hubner</h4></div>
+          <div class="player-card"><div class="role">Bek</div><h4>Wahyu Prasetyo</h4></div>
+          <div class="player-card"><div class="role">Bek</div><h4>Dony Tri Pamungkas</h4></div>
+          <div class="player-card"><div class="role">Bek</div><h4>Brian Fatari</h4></div>
+          <div class="player-card"><div class="role">Bek</div><h4>Shayne Pattynama</h4></div>
+        </div>
+      </div>
+
+      <div class="squad-group">
+        <div class="glabel"><span>Lini Tengah</span><span>4 pemain</span></div>
+        <div class="player-grid">
+          <div class="player-card"><div class="role">Gelandang</div><h4>Thom Haye</h4></div>
+          <div class="player-card"><div class="role">Gelandang</div><h4>Ivar Jenner</h4></div>
+          <div class="player-card"><div class="role">Gelandang</div><h4>Kadek Agung</h4></div>
+          <div class="player-card"><div class="role">Gelandang</div><h4>Marc Klok</h4></div>
+        </div>
+      </div>
+
+      <div class="squad-group">
+        <div class="glabel"><span>Sayap &amp; Lini Depan</span><span>7 pemain</span></div>
+        <div class="player-grid">
+          <div class="player-card"><div class="role">Penyerang</div><h4>Marselino Ferdinan</h4></div>
+          <div class="player-card"><div class="role">Penyerang</div><h4>Beckham Putra</h4></div>
+          <div class="player-card"><div class="role">Penyerang</div><h4>Egy Maulana Vikri</h4></div>
+          <div class="player-card"><div class="role">Penyerang</div><h4>Eliano Reijnders</h4></div>
+          <div class="player-card"><div class="role">Penyerang</div><h4>Tim Geypens</h4></div>
+          <div class="player-card"><div class="role">Penyerang</div><h4>Rayhan Hanan</h4></div>
+          <div class="player-card"><div class="role">Penyerang</div><h4>Mitchell Baker</h4></div>
+        </div>
+      </div>
+
+      <p style="font-size:13px; margin-top:10px;">*Untuk Piala AFF 2026, Herdman memilih kebijakan khusus: hanya memanggil pemain yang bermain di kompetisi domestik. Susunan bisa berubah tiap ada pemanggilan baru — cek akun resmi @timnasindonesia untuk update terkini.</p>
+    </div>
+  </section>
+</section>
+
+<!-- ================= PAGE 3: JADWAL ================= -->
+<section class="page" id="jadwal" data-page="jadwal">
+  <div style="height:68px;"></div>
+  <section style="padding-top:60px;">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Halaman 03</span>
+        <h2>Jadwal &amp; Laga</h2>
+        <p>Fase Grup A Piala AFF 2026 — Indonesia satu grup dengan Vietnam (juara bertahan), Singapura, Kamboja, dan Timor Leste. Dua tim terbaik lolos ke semifinal.</p>
+      </div>
+
+      <div class="fixture-list">
+        <div class="fixture-card ticket-edge">
+          <div class="fixture-date"><div class="d">27</div><div class="m">Jul 2026</div></div>
+          <div class="fixture-main">
+            <div class="comp">Piala AFF 2026 · Fase Grup</div>
+            <h4>Indonesia vs Kamboja</h4>
+            <div class="venue">Kandang</div>
+          </div>
+          <div class="fixture-status">Laga Pembuka</div>
+        </div>
+
+        <div class="fixture-card ticket-edge">
+          <div class="fixture-date"><div class="d">31</div><div class="m">Jul 2026</div></div>
+          <div class="fixture-main">
+            <div class="comp">Piala AFF 2026 · Fase Grup</div>
+            <h4>Timor Leste vs Indonesia</h4>
+            <div class="venue">Tandang · Thailand</div>
+          </div>
+          <div class="fixture-status">Tandang</div>
+        </div>
+
+        <div class="fixture-card ticket-edge">
+          <div class="fixture-date"><div class="d">03</div><div class="m">Agu 2026</div></div>
+          <div class="fixture-main">
+            <div class="comp">Piala AFF 2026 · Fase Grup</div>
+            <h4>Indonesia vs Vietnam</h4>
+            <div class="venue">Kandang · Juara bertahan</div>
+          </div>
+          <div class="fixture-status">Laga Besar</div>
+        </div>
+
+        <div class="fixture-card ticket-edge">
+          <div class="fixture-date"><div class="d">07</div><div class="m">Agu 2026</div></div>
+          <div class="fixture-main">
+            <div class="comp">Piala AFF 2026 · Fase Grup</div>
+            <h4>Singapura vs Indonesia</h4>
+            <div class="venue">Tandang</div>
+          </div>
+          <div class="fixture-status">Penutup Grup</div>
+        </div>
+
+        <div class="fixture-card ticket-edge">
+          <div class="fixture-date"><div class="d">26</div><div class="m">Agu 2026</div></div>
+          <div class="fixture-main">
+            <div class="comp">Piala AFF 2026</div>
+            <h4>Babak Gugur &amp; Final</h4>
+            <div class="venue">Menyusul jika lolos grup</div>
+          </div>
+          <div class="fixture-status">Akhir Turnamen</div>
+        </div>
+      </div>
+
+      <div class="note-box">
+        Catatan: turnamen ini masih berjalan pada saat halaman ini dibuat, jadi skor dan hasil pertandingan sengaja tidak dicantumkan di sini. Pantau hasil langsung lewat kanal resmi PSSI atau AFF supaya datanya selalu akurat.
+      </div>
+    </div>
+  </section>
+</section>
+
+<!-- ================= PAGE 4: SEJARAH ================= -->
+<section class="page" id="sejarah" data-page="sejarah">
+  <div style="height:68px;"></div>
+  <section style="padding-top:60px;">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="eyebrow">Halaman 04</span>
+        <h2>Akar &amp; Perjalanan</h2>
+        <p>Sepak bola Indonesia tidak lahir kemarin sore. Ini beberapa titik penting yang membentuk identitas Skuad Garuda seperti sekarang.</p>
+      </div>
+
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="yr">1930</div>
+          <h4>PSSI Berdiri</h4>
+          <p>Persatuan Sepakbola Seluruh Indonesia dibentuk di Yogyakarta — jauh sebelum negara ini merdeka, sepak bola sudah jadi ruang perjuangan dan identitas bersama.</p>
+        </div>
+        <div class="tl-item">
+          <div class="yr">1938</div>
+          <h4>Sejarah di Piala Dunia</h4>
+          <p>Tampil sebagai Hindia Belanda, tim ini tercatat sebagai wakil Asia pertama yang berlaga di putaran final Piala Dunia — sebuah catatan yang masih dikenang sampai hari ini.</p>
+        </div>
+        <div class="tl-item">
+          <div class="yr">1950-an — 1960-an</div>
+          <h4>Era Emas Asia Tenggara</h4>
+          <p>Indonesia menjadi salah satu kekuatan disegani di kawasan, dengan prestasi di ajang Asian Games dan berbagai turnamen persahabatan internasional.</p>
+        </div>
+        <div class="tl-item">
+          <div class="yr">Era Piala AFF</div>
+          <h4>Spesialis Runner-up</h4>
+          <p>Sejak Piala AFF digelar, Indonesia enam kali menembus partai final — rekor terbanyak di antara semua negara peserta. Gelar juara memang belum datang, tapi konsistensi ini menunjukkan betapa kuatnya budaya sepak bola di sini.</p>
+        </div>
+        <div class="tl-item">
+          <div class="yr">2026</div>
+          <h4>Babak Baru</h4>
+          <p>Di bawah asuhan John Herdman, Timnas Indonesia memasuki babak baru: memadukan pemain diaspora, talenta muda domestik, dan ambisi besar menuju panggung dunia.</p>
+        </div>
+      </div>
+
+      <div class="trophy-strip">
+        <div class="trophy-card"><div class="n">6×</div><div class="l">Runner-up Piala AFF</div></div>
+        <div class="trophy-card"><div class="n">1938</div><div class="l">Debut Piala Dunia</div></div>
+        <div class="trophy-card"><div class="n">1930</div><div class="l">PSSI Didirikan</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cta-block">
+    <div class="wrap">
+      <h2>Satu Nusa, Satu Suara</h2>
+      <p>Setiap laga adalah cerita baru. Terus dukung perjalanan Garuda menuju panggung yang lebih besar.</p>
+      <button class="btn" data-goto="beranda">Kembali ke Beranda</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand">Skuad Garuda</div>
+        <p class="foot-note" style="margin-top:8px;">Halaman informasi tak resmi seputar Timnas Sepak Bola Indonesia — dibuat untuk penggemar, oleh penggemar.</p>
+      </div>
+      <p class="foot-note">Data pemain dan jadwal mengacu pada informasi publik terkini seputar Piala AFF 2026. Untuk info resmi dan hasil pertandingan terbaru, selalu cek kanal resmi PSSI.</p>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 — Dibuat dengan semangat Merah Putih</span>
+      <span>Garuda di Dadaku</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- Page switching ----
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const gotoBtns = document.querySelectorAll('[data-goto]');
+  const pages = document.querySelectorAll('.page');
+
+  function showPage(name){
+    pages.forEach(p => p.classList.toggle('active', p.dataset.page === name));
+    tabBtns.forEach(b => b.classList.toggle('active', b.dataset.page === name));
+    window.scrollTo({top:0, behavior:'smooth'});
+    document.getElementById('tabs').classList.remove('open');
+  }
+
+  tabBtns.forEach(b => b.addEventListener('click', () => showPage(b.dataset.page)));
+  gotoBtns.forEach(b => b.addEventListener('click', () => showPage(b.dataset.goto)));
+
+  document.getElementById('navToggle').addEventListener('click', () => {
+    document.getElementById('tabs').classList.toggle('open');
+  });
+
+  // ---- Countdown to end of AFF Cup 2026 (Aug 26, 2026) ----
+  const target = new Date('2026-08-26T23:59:00+07:00').getTime();
+  const clockEl = document.getElementById('countdownClock');
+  function tick(){
+    const now = Date.now();
+    const diff = target - now;
+    if(diff <= 0){ clockEl.textContent = 'Turnamen Usai'; return; }
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff / (1000*60*60)) % 24);
+    const m = Math.floor((diff / (1000*60)) % 60);
+    clockEl.textContent = d + 'H ' + String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 30000);
+</script>
+
+</body>
+</html>
